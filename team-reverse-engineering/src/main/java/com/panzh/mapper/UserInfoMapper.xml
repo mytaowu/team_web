@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.panzh.entity.UserInfo" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+    <result column="user_class" property="userClass" jdbcType="VARCHAR" />
+    <result column="user_college" property="userCollege" jdbcType="VARCHAR" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="user_power" property="userPower" jdbcType="INTEGER" />
+    <result column="user_pass" property="userPass" jdbcType="VARCHAR" />
+    <result column="user_use" property="userUse" jdbcType="INTEGER" />
+    <result column="user_ph" property="userPh" jdbcType="VARCHAR" />
+    <result column="usert_imge" property="usertImge" jdbcType="VARCHAR" />
+    <result column="user_createtime" property="userCreatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_info
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.panzh.entity.UserInfo" >
+    insert into user_info (user_id, user_name, user_sex, 
+      user_class, user_college, user_stid, 
+      user_power, user_pass, user_use, 
+      user_ph, usert_imge, user_createtime
+      )
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{userSex,jdbcType=VARCHAR}, 
+      #{userClass,jdbcType=VARCHAR}, #{userCollege,jdbcType=VARCHAR}, #{userStid,jdbcType=VARCHAR}, 
+      #{userPower,jdbcType=INTEGER}, #{userPass,jdbcType=VARCHAR}, #{userUse,jdbcType=INTEGER}, 
+      #{userPh,jdbcType=VARCHAR}, #{usertImge,jdbcType=VARCHAR}, #{userCreatetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.panzh.entity.UserInfo" >
+    update user_info
+    set user_name = #{userName,jdbcType=VARCHAR},
+      user_sex = #{userSex,jdbcType=VARCHAR},
+      user_class = #{userClass,jdbcType=VARCHAR},
+      user_college = #{userCollege,jdbcType=VARCHAR},
+      user_stid = #{userStid,jdbcType=VARCHAR},
+      user_power = #{userPower,jdbcType=INTEGER},
+      user_pass = #{userPass,jdbcType=VARCHAR},
+      user_use = #{userUse,jdbcType=INTEGER},
+      user_ph = #{userPh,jdbcType=VARCHAR},
+      usert_imge = #{usertImge,jdbcType=VARCHAR},
+      user_createtime = #{userCreatetime,jdbcType=TIMESTAMP}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select user_id, user_name, user_sex, user_class, user_college, user_stid, user_power, 
+    user_pass, user_use, user_ph, usert_imge, user_createtime
+    from user_info
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select user_id, user_name, user_sex, user_class, user_college, user_stid, user_power, 
+    user_pass, user_use, user_ph, usert_imge, user_createtime
+    from user_info
+  </select>
+</mapper>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.UserInfoMapper" >
+
+  <resultMap id="BaseResultMap" type="com.panzh.entity.UserInfo" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+    <result column="user_class" property="userClass" jdbcType="VARCHAR" />
+    <result column="user_college" property="userCollege" jdbcType="VARCHAR" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="user_power" property="userPower" jdbcType="INTEGER" />
+    <result column="user_pass" property="userPass" jdbcType="VARCHAR" />
+    <result column="user_use" property="userUse" jdbcType="INTEGER" />
+    <result column="user_ph" property="userPh" jdbcType="VARCHAR" />
+    <result column="usert_imge" property="usertImge" jdbcType="VARCHAR" />
+    <result column="user_createtime" property="userCreatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="UserInfoVOResultMap" type="com.panzh.vo.UserInfoVO" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+    <result column="user_class" property="userClass" jdbcType="VARCHAR" />
+    <result column="user_power" property="userPower" jdbcType="INTEGER" />
+    <result column="user_college" property="userCollege" jdbcType="VARCHAR" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="user_use" property="userUse" jdbcType="INTEGER" />
+    <result column="user_ph" property="userPh" jdbcType="VARCHAR" />
+    <result column="usert_imge" property="usertImge" jdbcType="VARCHAR" />
+    <result column="user_createtime" property="userCreatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+
+<!--  List<UserInfoVO> getAllUserInfoVo();-->
+  <select id="getAllUserInfoVo" resultMap="UserInfoVOResultMap">
+    select * from user_info where user_info.user_use = 0
+  </select>
+
+<!--  List<UserInfoVO> getAllUserInfoVoProhibit();-->
+  <select id="getAllUserInfoVoProhibit" resultMap="UserInfoVOResultMap">
+    select * from user_info where user_info.user_use = 1
+  </select>
+
+<!--  UserInfoVO selectUserInfoVoByUserStid(String userStid);-->
+  <select id="selectUserInfoVoByUserStid" resultMap="UserInfoVOResultMap">
+    select * from user_info where user_info.user_stid = #{userStid}
+  </select>
+
+<!--  void savaUserInfoByRegisterVO(UserRegisterVO userRegisterVO);-->
+  <insert id="savaUserInfoByRegisterVO" parameterType="com.panzh.vo.UserRegisterVO">
+    insert into user_info(user_name, user_sex, user_class, user_college, user_stid, user_power, user_pass, user_use, user_ph, user_createtime,usert_imge)
+    values (#{userName},#{userSex},#{userClass},#{userCollege},#{userStid},0,#{userPass},0,#{userPh},now(),'http://39.107.45.130:8001/group1/M00/00/00/rBHE-F5sUjKAY7lbAAaOf72naLM034.jpg');
+  </insert>
+
+<!--  void modifyUserInfo(ModifyUserVO modifyUserVO);-->
+  <update id="modifyUserInfo" parameterType="com.panzh.vo.ModifyUserVO">
+    update user_info set user_info.user_class = #{userClass},
+      user_info.user_college = #{userCollege},
+      user_info.user_ph = #{userPh},
+      user_info.usert_imge = #{usertImge}
+    where user_info.user_id = #{userId}
+  </update>
+
+<!--  void setUserInfoToAdmin(int userId);-->
+  <update id="setUserInfoToAdmin" parameterType="int">
+    update user_info set user_info.user_power = 1 where user_info.user_id = #{userId}
+  </update>
+
+<!--  void passValidation(String userId);-->
+  <update id="passValidation" parameterType="string">
+    update user_info set user_info.user_use = 1 where user_info.user_id = #{userId}
+  </update>
+
+<!--  void reSetPass(String userId, String defaultPassword);-->
+  <update id="reSetPass" parameterType="string">
+    update user_info set user_info.user_pass = #{defaultPassword} where user_info.user_id = #{userId}
+  </update>
+<!--  Integer getAllReaderNumByUserStid(String userStid);-->
+  <select id="getAllReaderNumByUserStid" resultType="int" parameterType="string">
+    SELECT
+        SUM( news_info.new_times )
+    FROM
+        `news_info`
+        LEFT JOIN user_info ON news_info.user_stid = user_info.user_stid
+    WHERE
+        user_info.user_stid = #{userStid}
+  </select>
+
+<!--  Integer allNewInfoTotalNum(String userStid);-->
+  <select id="allNewInfoTotalNum" resultType="int" parameterType="string">
+    SELECT
+        count(*)
+    FROM
+        `news_info`
+        LEFT JOIN user_info ON news_info.user_stid = user_info.user_stid
+    WHERE
+        user_info.user_stid = #{userStid}
+  </select>
+
+
+<!--  Integer getStudyInfoTotalNum(String userStid);-->
+  <select id="getStudyInfoTotalNum" resultType="int" parameterType="string">
+    SELECT
+        count(*)
+    FROM
+        `study_info`
+        LEFT JOIN user_info ON study_info.user_stid = user_info.user_stid
+    WHERE
+        user_info.user_stid = #{userStid}
+  </select>
+
+
+  <!--  Integer getResuleInfoNum(String userStid);-->
+  <select id="getResuleInfoNum" resultType="int" parameterType="string">
+    SELECT
+        count(*)
+    FROM
+        `resule_info`
+        LEFT JOIN user_info ON resule_info.user_stid = user_info.user_stid
+    WHERE
+        user_info.user_stid = #{userStid}
+  </select>
+
+<!--  void setAdminToUser(Integer userId);-->
+    <update id="setAdminToUser" parameterType="int">
+      update user_info set user_info.user_power = 0 where user_info.user_id = #{userId}
+    </update>
+
+<!--  void updateImageAndInDataBase(@Param("path") String path, @Param("userId")Integer userId);-->
+    <update id="updateImageAndInDataBase">
+      update user_info set usert_imge = #{path} where user_id = #{userId}
+    </update>
+
+
+</mapper>

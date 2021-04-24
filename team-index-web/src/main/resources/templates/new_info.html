@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="common_head :: commonHeader('新闻详细')"></head>
+<head>
+    <link rel="stylesheet" th:href="@{/css/data_info.css}">
+</head>
+<body>
+
+<div class="container">
+    <div th:replace="team_dyname :: white_header"></div>
+    <div class="inner">
+        <div class="inner-head">
+            <img th:src="@{/image/head_logo.png}" style="height: 47px;">
+
+            <div class="inner-head-bar">
+                  <span class="layui-breadcrumb">
+                      <a href="/index">首页</a>
+                      <a href="/team_news">新闻动态</a>
+                      <a href="#">新闻内容</a>
+                 </span>
+            </div>
+        </div>
+
+        <div class="inner-text">
+            <div class="layui-row">
+                <div class="layui-col-md2">
+                    <div class="grid-demo grid-demo-bg1">
+                        <!--左边栏-->
+                        <div class="inner-box">
+                            <i class="layui-icon layui-icon-fire" ></i>
+                            <span>阅读数:</span>
+                            <span th:text="${newInfo.getNewTimes()}"></span>
+                        </div>
+
+                        <fieldset class="layui-elem-field">
+                            <legend>文章标签</legend>
+                            <div class="layui-field-box inner-tag">
+                                <span>JAVA</span>
+                                <span>算法</span>
+                                <span>流行框架</span>
+                                <span>微服务工程</span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="layui-col-md7">
+                    <div class="grid-demo">
+                        <div class="inner-text-article-title">
+                            <h1 th:text="${newInfo.getNewTitle()}"></h1>
+                            <span>学号:</span><span th:text="${newInfo.getUserInfo().getUserStid()}"></span>
+                            <span>姓名:</span><span th:text="${newInfo.getUserInfo().getUserName()}"></span>
+                            <span>时间:</span><span th:text="${newInfo.getNewImge()}"></span>
+                        </div>
+                        <div class="inner-text-article-inner" th:utext="${newInfo.getNewValue()}">
+<!--                        <div class="inner-text-article-inner" >-->
+                        </div>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="inner-text-article-tail">
+                            <ul id="tail-recommend">
+                            <!--这里存放底端推荐-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="grid-demo grid-demo-bg1">
+                        <fieldset class="layui-elem-field hot-info-div">
+                            <legend>热门推荐</legend>
+                            <div class="layui-field-box hot-info">
+                                <ul id="right-recommend">
+                                    <!--这里存放右方推荐-->
+                                </ul>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="team_dyname :: foot"/>
+</div>
+
+
+<script>
+    layui.use('layer', function () {
+        var layer = layui.layer;
+    });
+
+    layui.use('element', function(){
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+
+        //监听导航点击
+        element.on('nav(demo)', function(elem){
+            //console.log(elem)
+            layer.msg(elem.text());
+        });
+    });
+
+
+    $(function () {
+        var childrenP = $(".inner-text-article-inner").children("p");
+        childrenP.each(function (index,value) {
+            var imgs = $(value).children("img");
+
+            if (imgs[0] != undefined){
+                $(value).css({"text-align":"center"});
+            }
+        })
+
+
+        $.get("/get/simple/new/info/vo/5",function (res) {
+            showPageTailRecommend(res.data);
+            showPageRightRecommend(res.data);
+        })
+    });
+
+    function showPageTailRecommend(list) {
+        for (var i = 0 ; i < list.length ; i++){
+            var newTitle = list[i].newTitle;
+            newTitle = newTitle.length <= 12 ? newTitle :newTitle.substr(0,12);
+            var html = "<li><a target='_blank' href='/show_new_info.do/"+list[i].newId+"'><img src='"+list[i].newImge+"'><span>"+newTitle+"</span></a></li>";
+            $("#tail-recommend").append(html);
+        }
+    }
+    
+    function showPageRightRecommend(list) {
+        for (var i = 0 ; i < list.length ; i++){
+            var html = "<li><a target='_blank' href='/show_new_info.do/"+list[i].newId+"'>"+list[i].newTitle;+"</a></li>";
+            $("#right-recommend").append(html);
+        }
+    }
+</script>
+</body>
+</html>

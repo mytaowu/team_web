@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/layui/layui.js"></script>
+    <script src="/js/jquery.form.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">用户注册</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div class="login-div">
+                <form id="register-form" method="post">
+                    <font>姓名：</font>
+                    <span class="login-acct login-span">
+                    <i class="layui-icon layui-icon-username"></i><input id="userName" name="userName" required type="text"
+                                                                         class="inner-acct-text">
+                </span>
+                    <br>
+                    <font>学号：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-auz"></i><input id="userStid" name="userStid" required type="text"
+                                                                    class="inner-acct-text">
+                </span><br>
+                    <font id="sex">性别：</font>
+                    <select name="userSex" id="userSex">
+                        <option name="userSex" value="男" selected>男</option>
+                        <option name="userSex" value="女">女</option>
+                    </select><br>
+                    <font>班级：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-home"></i><input id="userClass" name="userClass" required type="text"
+                                                                     class="inner-acct-text">
+                </span>
+                    <br>
+                    <font>学院：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-log"></i><input id="userCollege" name="userCollege" required type="text"
+                                                                    class="inner-acct-text">
+                </span>
+                    <br>
+                    <font>电话：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-password"></i><input id="userPh" name="userPh" required type="number"
+                                                                         class="inner-acct-text">
+                </span>
+                    <br>
+                    <font>密码：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-password"></i><input id="userPass" name="userPass" required type="password"
+                                                                         class="inner-acct-text">
+                </span>
+                </form>
+                <button id="register-btn" >点击注册</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+
+
+    $(function () {
+        initPage();
+        $('#register-btn').on('click',function() {
+            var UserRegisterVO = {};
+
+            var userName = $("#userName").val();
+            if (userName == null || userName == undefined ||userName.length == 0) {
+                layer.msg("请输入姓名！");
+                return;
+            }
+            UserRegisterVO.userName = userName;
+
+            var userSex = $("#userSex option:selected").val();
+            console.log(userSex);
+            if (userSex == null || userSex == undefined ||userSex.length == 0) {
+                layer.msg("请选择性别");
+                return;
+            }
+            UserRegisterVO.userSex = userSex;
+
+            var userCollege = $("#userCollege").val();
+            if (userCollege == null || userCollege == undefined ||userCollege.length == 0) {
+                layer.msg("请输入学院！");
+                return;
+            }
+            UserRegisterVO.userCollege = userCollege;
+
+            var userClass = $("#userClass").val();
+            if (userClass == null || userClass == undefined ||userClass.length == 0) {
+                layer.msg("请输入班级！");
+                return;
+            }
+            UserRegisterVO.userClass = userClass;
+
+
+            var userStid = $("#userStid").val();
+            if (userStid == null || userStid == undefined ||userStid.length == 0) {
+                layer.msg("请输入学号！");
+                return;
+            }
+            UserRegisterVO.userStid = userStid;
+
+            var userPass = $("#userPass").val();
+            if (userPass == null || userPass == undefined ||userPass.length == 0) {
+                layer.msg("请输入密码！");
+                return;
+            }
+            UserRegisterVO.userPass = userPass;
+
+            var userPh = $("#userPh").val();
+            if (userPh == null || userPh == undefined ||userPh.length == 0) {
+                layer.msg("请输入电话！");
+                return;
+            }
+            UserRegisterVO.userPh = userPh;
+            $.ajax({
+                url: "/do/register",
+                type: "POST",
+                data:JSON.stringify(UserRegisterVO),
+                contentType: "application/json",  //缺失会出现URL编码，无法转成json对象
+                success: function (res) {
+                    if (res.result == "SUCCESS") {
+                        layer.msg("注册成功！请等待管理员审核！");
+                        //重新加载网页;
+                        setTimeout(function () {
+                            window.open("/index", "_parent");
+                        }, 2000);
+                    }else {
+                        layer.msg(res.message);
+                        //密码栏置为空;
+                        $("#userPass").val("");
+                        $("#userStid").val("");
+                    }
+                }
+            });
+        });
+        /**
+         * 自动将form表单封装成json对象
+         */
+        $.fn.serializeObject = function() {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function () {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+    })
+
+    function initPage() {
+        layui.use('layer', function(){
+            layer = layui.layer;
+        });
+    }
+
+
+</script>
+</body>
+</html>

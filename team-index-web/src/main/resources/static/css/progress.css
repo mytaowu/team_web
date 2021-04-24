@@ -1,0 +1,109 @@
+.progress {
+    display: none;
+    margin-top: 30px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 100;
+}
+
+
+.progress.ro span {
+    position: absolute;
+    -ms-transform: rotate(225deg);
+    transform: rotate(225deg);
+    animation: orbit 6s infinite
+}
+
+.progress.ro span:after {
+    content: '';
+    position: absolute;
+    border-radius: 100%;
+    background-color: #FFF;
+    animation:colorful 36.6s infinite linear;
+}
+
+.progress.ro span:nth-child(2) {
+    animation-delay: 260ms
+}
+
+.progress.ro span:nth-child(3) {
+    animation-delay: 510ms
+}
+
+.progress.ro span:nth-child(4) {
+    animation-delay: 750ms
+}
+
+.progress.ro span:nth-child(5) {
+    animation-delay: 990ms
+}
+
+.progress.ro.dot {
+    width: 20px;
+    height: 20px
+}
+
+.progress.ro.dot span {
+    width:56px;
+    height: 56px
+}
+
+.progress.ro.dot span:after {
+    width: 8px;
+    height: 8px
+}
+
+/* 设置轨迹 */
+@keyframes orbit {
+    0% {
+        transform: rotate(225deg);
+        opacity: 1;
+        animation-timing-function: ease-out
+    }
+    7% {
+        transform: rotate(345deg);
+        animation-timing-function: linear
+    }
+    30% {
+        transform: rotate(455deg);
+        animation-timing-function: ease-in-out
+    }
+    39% {
+        transform: rotate(690deg);
+        animation-timing-function: linear
+    }
+    70% {
+        transform: rotate(815deg);
+        opacity: 1;
+        animation-timing-function: ease-out
+    }
+    75% {
+        transform: rotate(945deg);
+        animation-timing-function: ease-out
+    }
+    76% {
+        transform: rotate(945deg);
+        opacity: 0
+    }
+    100% {
+        transform: rotate(945deg);
+        opacity: 0
+    }
+}
+
+/* 设置变色 */
+@keyframes colorful{
+    0%{ background-color:#1cb1f2}
+    6%{ background-color:#1cb1f2}
+    25%{ background-color: #0b5fff}
+    39%{ background-color: #7d3eff}
+    50%{ background-color: #df24e1}
+    55%{ background-color: #e13724}
+    60%{ background-color: #e1cc42}
+    63%{ background-color: #3ee104}
+    80%{ background-color: #27e1c9}
+    88%{ background-color:#1cb1f2}
+    100%{ background-color: #1cb1f2}
+}

@@ -1,0 +1,168 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+.layui-tab-item{
+    text-align: center;
+    width: 400px;
+    height: 350px;
+}
+
+.login-div span{
+    display: inline-block;
+    margin-top: 5px;
+    height: 40px;
+    width: 80%;
+    font-size: 16px;
+    border: 1px solid #dbdee1;
+    line-height: 40px;
+    color: #8D8D8D;
+}
+
+.login-div span:hover{
+    border: 1px solid #1890ff;
+    color: #1890ff;
+    transition:border 0.3s ease-in-out;
+}
+
+.login-div span .layui-icon{
+    display: inline-block;
+    float: left;
+    margin-left: 5px;
+    font-size: 23px;
+    border: 0;
+}
+
+.login-div span .inner-acct-text{
+    display: inline-block;
+    height: 100%;
+    width: 88%;
+    margin-left: 5px;
+    float: left;
+    color: #0C0C0C;
+    border: 0;
+    border-left: 1px solid #dbdee1;
+    font: 18px "Microsoft YaHei";
+}
+
+.login-div span .inner-acct-text:hover{
+    border-left: 1px solid #1890ff;
+    transition:border 0.3s ease-in-out;
+}
+
+.login-div .login-btn{
+    margin-top: 12px;
+    display: inline-block;
+    width: 81%;
+    height: 40px;
+    border: 0;
+    background-color: #1890ff;
+    font-size: 18px;
+    color: #fff;
+}
+
+.login-div .login-btn:hover{
+    opacity:0.8;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.login-tail .login-a{
+    margin: 0 auto;
+    height: 50px;
+    width: 81%;
+    text-align: center;
+    line-height: 50px;
+}
+
+.login-tail .login-a a:hover{
+    color:  #1890ff;
+    text-decoration:underline;
+    transition:color, text-decoration 0.2s ease-in-out;
+
+}
+
+.login-tail a:first-child{
+    margin-left: 10px;
+    float: left;
+
+}
+.login-tail a:last-child{
+    margin-right: 10px;
+    float: right;
+}
+
+
+.drag{
+    width: 324px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #e8e8e8;
+    position: relative;
+    margin:0 auto;
+    margin-top: 5px;
+}
+.bg{
+    width:40px;
+    height: 100%;
+    position: absolute;
+    background-color: #75CDF9;
+}
+.text{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    user-select: none;
+}
+.btn{
+    width:40px;
+    height: 38px;
+    position: absolute;
+    border:1px solid #ccc;
+    cursor: move;
+    font-family: "宋体";
+    text-align: center;
+    background-color: #fff;
+    user-select: none;
+    color:#666;
+}
+
+.classfication{
+    width: 150px;
+    margin: 8px auto;
+    font: 16px "Microsoft YaHei";
+}
+
+
+.inner-upload-img{
+    display: inline-block;
+    width: 90%;
+    height: 200px;
+    border: 1px dashed #8D8D8D;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.inner-upload-span{
+    color: #8D8D8D;
+    font-size: 25px;
+    font-family: "微软雅黑";
+}
+
+.inner-upload-button{
+    display: inline-block;
+    background-color:#1890ff;
+    font-size: 18px;
+    color: #fff;
+    border: 0;
+    width: 150px;
+    height: 35px;
+    overflow: hidden;
+    border-radius: 2px;
+    margin-top: 3px;
+}
+
+.inner-upload-button:hover{
+    opacity:0.8;
+    transition: opacity 0.2s ease-in-out;
+}

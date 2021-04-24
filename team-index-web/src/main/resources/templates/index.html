@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="common_head :: commonHeader('攀枝花创新实践团队首页')"></head>
+<head>
+    <link rel="stylesheet" th:href="@{/css/myPage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/base.css}"/>
+
+    <script src="/js/myPage.js"></script>
+</head>
+<body>
+<div class="head while-head">
+    <a th:href="@{/index}"><img th:src="@{/image/logo/head_log_3.png}"></a>
+
+    <ul class="headUl">
+        <li><a num="1" class="while-head-a" th:href="@{/team_dyname}">团队动态</a></li>
+        <li><a num="2" class="while-head-a" th:href="@{/team_news}">热点新闻</a></li>
+        <li><a num="3" class="while-head-a" th:href="@{/team_achievements}">团队成果</a></li>
+        <li><a num="4" class="while-head-a" th:href="@{/learning_resource}">学习资源</a></li>
+    </ul>
+    <ul class="headLogin" th:hidden="${session.userInfo != null}">
+        <li><a style="color: #fff" id="login-btn" href="">登录/</a><a id="register-btn" style="color: #fff" href="">注册</a>
+        </li>
+    </ul>
+    <ul class="headLogin" th:hidden="${session.userInfo == null}">
+        <li>
+            <a class="headLogin-a">
+                <img th:src="${session.userInfo == null ? 'xxx' : session.userInfo.getUsertImge()}" alt="">
+            </a>
+        </li>
+    </ul>
+    <ul class="float-ul">
+        <li><a href="/get/user/info">个人主页</a></li>
+        <li><a num=1 class="add-btn" href="#">添加动态</a></li>
+        <li><a num=2 class="add-btn" href="#">添加新闻</a></li>
+        <li><a num=3 class="add-btn" href="#">添加成果</a></li>
+        <li><a num=4 class="add-btn" href="#">添加资源</a></li>
+        <li><a href="/do/login/out">退出登录</a></li>
+    </ul>
+</div>
+
+<div id="fullpage">
+    <!--为了产生一个遮罩的效果-->
+    <div class="videos"></div>
+    <div class="section section1">
+        <button id="video-btn"><i class="layui-icon layui-icon-play"></i></button>
+        <a id="head-a" href="">
+            <br>
+            <div>
+                <span id="head-span">WEB应用专业团队-宣传片</span><br><br>
+                <span id="head-span2">攀枝花学院-数学与计算机学院</span>
+            </div>
+        </a>
+        <div class="vclose"><i class="layui-icon layui-icon-close"></i></div>
+    </div>
+    <div id="page2" class="section section2">
+        <!--        这里存放第二屏幕的图片-->
+    </div>
+    <div class="section section4">
+        <span class="page-head">团队成果</span><br>
+        <span class="page-head" style="font-size: 16px">TEAM RESULTS</span>
+        <div id="certify">
+            <div class="swiper-container">
+                <div class="swiper-wrapper" id="teil-lunbo">
+                    <!--                    这里存放底部的轮播图-->
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </div>
+</div>
+<script>
+    function initLunboPage() {
+        certifySwiper = new Swiper('#certify .swiper-container', {
+            watchSlidesProgress: true,
+            slidesPerView: 'auto',
+            centeredSlides: true,
+            loop: true,
+            loopedSlides: 5,
+            autoplay: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                //clickable :true,
+            },
+            on: {
+                progress: function (progress) {
+                    for (i = 0; i < this.slides.length; i++) {
+                        var slide = this.slides.eq(i);
+                        var slideProgress = this.slides[i].progress;
+                        modify = 1;
+                        if (Math.abs(slideProgress) > 1) {
+                            modify = (Math.abs(slideProgress) - 1) * 0.3 + 1;
+                        }
+                        translate = slideProgress * modify * 260 + 'px';
+                        scale = 1 - Math.abs(slideProgress) / 5;
+                        zIndex = 999 - Math.abs(Math.round(10 * slideProgress));
+                        slide.transform('translateX(' + translate + ') scale(' + scale + ')');
+                        slide.css('zIndex', zIndex);
+                        slide.css('opacity', 1);
+                        if (Math.abs(slideProgress) > 3) {
+                            slide.css('opacity', 0);
+                        }
+                    }
+                },
+                setTransition: function (transition) {
+                    for (var i = 0; i < this.slides.length; i++) {
+                        var slide = this.slides.eq(i)
+                        slide.transition(transition);
+                    }
+                }
+            }
+        })
+    }
+
+    $(function () {
+        // 解决首页大图加载缓慢的问题。
+        $(".section1").css("background-image", "url('../image/index/lubo/index_logo.webp')");
+        $(".section1").css("background-repeat", "no-repeat");
+        $(".section1").css("background-origin", "fixed");
+        $(".section1").css("background-position", "center");
+        load("../image/index/lubo/index_logo.jpg", () => {
+            $(".section1").css("background-image", "url('../image/index/lubo/index_logo.jpg')");
+        })
+        $("#video-btn").click(function () {
+            $('.videos').html("<video id=\"video\"  src='http://jsj.pzhu.edu.cn/__local/F/43/D0/B3ABF77CDD521F09485A4CBDDB2_669BAF8C_2C16C21.mp4?e=.mp4' preload=\"auto\" controls=\"controls\" ></video>");
+            $('.videos').show();
+            $('.vclose').show();
+            $(".section1").css("-webkit-filter", "brightness(50%)");
+            $(".section1").css("filter", "brightness(50%)");
+        });
+
+        $(".vclose").click(function () {
+            var v = document.getElementById('video');//获取视频节点
+            $('.videos').css("display", "none");//点击关闭按钮关闭暂停视频
+            v.pause();
+            $('.videos').html();
+            $(this).css("display", "none");
+            $(".section1").css("-webkit-filter", "brightness(80%)");
+            $(".section1").css("filter", "brightness(80%)");
+        });
+
+
+        initPageData();
+    });
+
+    // 图片预加载的函数。
+    function load(imgSrc, callback) {　　//imgSrc参数是页面中要预加载的图片的路径数组，如imgSrc=['img/xx.png','img/xxx.png'...],callback就是你加载完图片之后要执行的函数
+        var imgs = [];
+        var c = 0;
+        img = new Image();
+        img.src = imgSrc;
+        img.onload = function () {
+            callback();
+        }
+    }
+
+    function initPageData() {
+        initDyName();
+
+        $.get("get/resule/info/vo/for/count/" + 5, function (res) {
+            var data = res.data;
+            initResult(data);
+        })
+    }
+
+    function initDyName() {
+        var html = "";
+        html += "<a href='#'><img src=http://120.78.224.130:90/group1/M00/00/02/rBIfOV_j9QqAfyfyAAnMaOYgZjY714.jpg alt=''></a>";
+        html += "<a href='#'><img src=http://120.78.224.130:90/group1/M00/00/02/rBIfOV_j9UGAWKhFAAmZGdB707M929.jpg alt=''></a>";
+        html += "<a href='#'><img src=http://120.78.224.130:90/group1/M00/00/02/rBIfOV_j9VSAI1O6AAqQ8VzujXQ934.jpg alt=''></a>";
+        html += "<a href='#'><img src=http://120.78.224.130:90/group1/M00/00/02/rBIfOV_j9WmAUDgKAAprdYWhDIg620.jpg alt=''></a>";
+        $("#page2 > .fp-tableCell").append(html);
+    }
+
+    function initResult(data) {
+        var html = "";
+        $.each(data, function (index, value) {
+            html += "<div class='swiper-slide'><a href='" + value.resultLink + "' target = '_blank'><img src='" + value.resultImge + "'/><p>" + value.resultName + "</p></a></div>";
+        });
+
+        $("#teil-lunbo").append(html);
+        initLunboPage();
+    }
+</script>
+</body>
+</html>

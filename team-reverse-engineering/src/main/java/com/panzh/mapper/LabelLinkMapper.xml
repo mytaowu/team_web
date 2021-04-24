@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.LabelLinkMapper" >
+  <resultMap id="BaseResultMap" type="com.panzh.entity.LabelLink" >
+    <id column="lable_link_id" property="lableLinkId" jdbcType="INTEGER" />
+    <result column="lable_id" property="lableId" jdbcType="INTEGER" />
+    <result column="new_id" property="newId" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from label_link
+    where lable_link_id = #{lableLinkId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.panzh.entity.LabelLink" >
+    insert into label_link (lable_link_id, lable_id, new_id
+      )
+    values (#{lableLinkId,jdbcType=INTEGER}, #{lableId,jdbcType=INTEGER}, #{newId,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.panzh.entity.LabelLink" >
+    update label_link
+    set lable_id = #{lableId,jdbcType=INTEGER},
+      new_id = #{newId,jdbcType=INTEGER}
+    where lable_link_id = #{lableLinkId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select lable_link_id, lable_id, new_id
+    from label_link
+    where lable_link_id = #{lableLinkId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select lable_link_id, lable_id, new_id
+    from label_link
+  </select>
+</mapper>

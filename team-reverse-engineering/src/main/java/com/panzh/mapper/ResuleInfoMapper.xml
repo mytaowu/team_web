@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.ResuleInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.panzh.entity.ResuleInfo" >
+    <id column="result_id" property="resultId" jdbcType="INTEGER" />
+    <result column="result_name" property="resultName" jdbcType="VARCHAR" />
+    <result column="result_imge" property="resultImge" jdbcType="VARCHAR" />
+    <result column="result_link" property="resultLink" jdbcType="VARCHAR" />
+    <result column="result_time" property="resultTime" jdbcType="TIMESTAMP" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="result_value" property="resultValue" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from resule_info
+    where result_id = #{resultId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.panzh.entity.ResuleInfo" >
+    insert into resule_info (result_id, result_name, result_imge, 
+      result_link, result_time, user_stid, 
+      type_id, result_value)
+    values (#{resultId,jdbcType=INTEGER}, #{resultName,jdbcType=VARCHAR}, #{resultImge,jdbcType=VARCHAR}, 
+      #{resultLink,jdbcType=VARCHAR}, #{resultTime,jdbcType=TIMESTAMP}, #{userStid,jdbcType=VARCHAR}, 
+      #{typeId,jdbcType=INTEGER}, #{resultValue,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.panzh.entity.ResuleInfo" >
+    update resule_info
+    set result_name = #{resultName,jdbcType=VARCHAR},
+      result_imge = #{resultImge,jdbcType=VARCHAR},
+      result_link = #{resultLink,jdbcType=VARCHAR},
+      result_time = #{resultTime,jdbcType=TIMESTAMP},
+      user_stid = #{userStid,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      result_value = #{resultValue,jdbcType=LONGVARCHAR}
+    where result_id = #{resultId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select result_id, result_name, result_imge, result_link, result_time, user_stid, 
+    type_id, result_value
+    from resule_info
+    where result_id = #{resultId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select result_id, result_name, result_imge, result_link, result_time, user_stid, 
+    type_id, result_value
+    from resule_info
+  </select>
+</mapper>

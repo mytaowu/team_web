@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <title>添加新闻</title>
+    <link rel="stylesheet" th:href="@{/css/creative_center2.css}">
+    <link media="all" rel="stylesheet" type="text/css" th:href="@{/simditor/styles/simditor.css}"/>
+    <link rel="stylesheet" th:href="@{/css/headCss.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footCss.css}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+
+
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <script type="text/javascript" src="/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/uploader.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/simditor.js"></script>
+
+    <style>
+        .classfication{
+            width: 150px;
+            margin: 8px auto;
+            font: 16px "Microsoft YaHei";
+        }
+        .simditor .simditor-toolbar > ul{
+            margin: 1px !important;
+        }
+        .inner-head{
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <div th:replace="team_dyname :: white_header"></div>
+
+    <div class="inner">
+        <div class="inner-head">
+            <!--inner-head-title-->
+            <span class="inner-body-head-span">
+                 <input id="newTitle" placeholder="请输入标题" type="text" class="inner-body-title" autofocus>
+            </span>
+
+            <button id="on" class="inner-button"><i style="padding: 2px" class="layui-icon layui-icon-picture"></i>选择大图</button>
+                分类选择：
+                <select id="classfication" name="" class="classfication">
+                </select>
+            <button class="inner-button " id="OkBtn"><i style="padding: 2px" class="layui-icon layui-icon-ok"></i>发布</button>
+        </div>
+        <textarea id="editor"  autofocus></textarea>
+    </div>
+</div>
+
+
+
+
+
+<div id="onclikc" hidden>
+    <div class="layui-upload">
+        <div class="inner-upload-span">图片预览区</div>
+        <img  class="inner-upload-img" id="demo1">
+        <button type="button" class="layui-btn" id="test1">
+            <i class="layui-icon">&#xe67c;</i>上传图片
+        </button>
+    </div>
+</div>
+
+<input type="hidden" th:value="${session.userInfo.getUserStid()}" id="userStid">
+<script src="/js/common.js"></script>
+<script>
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#test1'
+            , url: '/updateImage'
+            ,before: function(input) {
+                // 显示加载框;
+                showloading(true);
+            }
+            , done: function (res) {
+                showloading(false);
+                //上传成功
+                $('#demo1').attr('src', res.file_path); //图片链接
+                layer.msg("添加成功！");
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            }
+        });
+    });
+
+
+    var textarea = new Simditor({
+        textarea: $('#editor'),
+        upload: {
+            url: '/updateImage'
+            ,fileKey: 'file'
+            ,connectionCount: 3
+            ,leaveConfirm: 'Uploading is in progress, are you sure to leave this page?'
+        },
+        toolbar: [
+            'title'
+            , 'bold'
+            , 'italic'
+            , 'underline'
+            , 'strikethrough'
+            , 'fontScale'
+            , 'color'
+            , 'ol'
+            , 'ul'
+            , 'blockquote'
+            , 'code'
+            , 'table'
+            , 'link'
+            , 'image'
+            , 'hr'
+            , 'indent'
+            , 'outdent'
+            , 'alignment'
+        ]
+    });
+
+
+
+    $(function () {
+        $("#on").click(function () {
+            layer.open({
+                title: "图片上传",
+                type: 1,
+                area: ['602px', '403px'],
+                content: $('#onclikc'), //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                resize: false
+            });
+        });
+        initAddInfoPage();
+    });
+    
+    function initAddInfoPage() {
+        $.get("/show/all/new/type",function (res) {
+            var typeInfo = res.data;
+            initTypeInfo(typeInfo);
+            bindBtn();
+        })
+    }
+
+    function bindBtn() {
+        $("#OkBtn").click(function () {
+            var newsInfo = {};
+            var newTitle = $("#newTitle").val();
+            if (newTitle == undefined || newTitle == null || newTitle.length == 0){
+                layer.msg("请输入标题！");
+                return;
+            }
+            newsInfo.newTitle = newTitle;
+
+            var newImge = $("#demo1").attr("src");
+            if (newImge == undefined || newImge == null || newImge.length == 0){
+                layer.msg("请上传新闻图片！");
+                return;
+            }
+            newsInfo.newImge = newImge;
+
+            newsInfo.userStid = $("#userStid").val();
+            newsInfo.newTimes = 0;
+            newsInfo.typeId = $('#classfication option:selected').attr("num");
+
+            var newValue = textarea.getValue();
+            if (newValue == undefined || newValue == null || newValue.length == 0){
+                layer.msg("请输入新闻的内容！");
+                return;
+            }
+            newsInfo.newValue = newValue;
+
+            $.ajax({
+                "url": "/add/new/info", //请求地址
+                "type": "POST",
+                "contentType": "application/json;charset=UTF-8",      //请求体的内容类型
+                "data": JSON.stringify(newsInfo),                 //发送给服务器的数据，将来的请求体
+                "dataType": "json",                            //预期服务器返回的响应体类型
+                "success": function (response) {
+                    console.log("进入方法！");
+                    layer.msg(response.message);
+                    if (response.result == "SUCCESS"){
+                        setTimeout(function() {
+                            window.opener=null;
+                            window.open('','_self');
+                            window.close();
+                            }, 2000);
+                    }
+                }
+            });
+
+        })
+    }
+
+    function initTypeInfo(typeInfo) {
+        var html = "";
+        $.each(typeInfo,function (index,value) {
+            if (index == 0){
+                html += "<option selected num = "+value.typeId+">"+value.typeName+"</option>";
+            }else {
+                html += "<option num = "+value.typeId+">"+value.typeName+"</option>";
+            }
+        })
+        $(".classfication").append(html);
+    }
+</script>
+
+<div th:replace="team_dyname :: foot"/>
+
+</body>
+</html>

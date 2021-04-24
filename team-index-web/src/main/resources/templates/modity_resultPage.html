@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head th:include="common_head :: commonHeader('修改成果')"></head>
+
+<head>
+    <meta charset="UTF-8">
+    <title>修改成果</title>
+
+    <link rel="stylesheet" th:href="@{/css/resultPage.css}">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">修改成果</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+
+            <div class="login-div">
+                <span class="login-acct">
+                    <i class="layui-icon layui-icon-edit"></i><input th:value="${resuleInfo.getResultName()}" id="resultName" placeholder="请输入成果名称" type="text" class="inner-acct-text" >
+                </span>
+                <br>
+                <span class="login-pass">
+                    <i class="layui-icon layui-icon-note"></i><input th:value="${resuleInfo.getResultValue()}" id="resultValue" type="text" placeholder="请输入成果内容" class="inner-acct-text" >
+                </span>
+                <br>
+                <span class="login-pass">
+                    <i class="layui-icon layui-icon-link"></i><input th:value="${resuleInfo.getResultLink()}" id="resultLink" type="text" placeholder="请输入成果链接" class="inner-acct-text" >
+                </span>
+                <div>
+                    分类选择：
+                    <select name="" id="classfication">
+                    </select>
+                </div>
+
+                <div class="layui-upload">
+                    <div class="inner-upload-span">图片预览区（max:3m）</div>
+                    <img th:src="${resuleInfo.getResultImge()}" class="inner-upload-img" id="demo1">
+                    <button type="button" class="inner-upload-button" id="test1">上传图片</button>
+
+                </div>
+                <button class="login-btn sava-result-page">点击保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="userStid" th:value="${resuleInfo.getUserStid()}">
+<input type="hidden" id="oldTypeId" th:value="${resuleInfo.getTypeId()}">
+<input type="hidden" id="resultId" th:value="${resuleInfo.getResultId()}">
+<script src="/js/common.js"></script>
+
+<script>
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#test1'
+            , url: '/updateImage'
+            , before: function(input) {
+                // 显示加载框;
+                showloading(true);
+            }
+            , done: function (res) {
+                showloading(false);
+                $('#demo1').attr('src', res.file_path); //图片链接（base64）
+                layer.msg("上传成功！");
+            }
+        });
+    });
+
+
+    $(function () {
+        $.get("/show/all/resule/type",function (res) {
+            var typeInfo = res.data;
+            initTypeInfo(typeInfo);
+            bindSavaResultPageBtn();
+        })
+    })
+    
+    function bindSavaResultPageBtn() {
+        $(".sava-result-page").click(function () {
+            var ResuleInfo = {};
+            var resultName = $("#resultName").val();
+            if (resultName == undefined || resultName == null || resultName.length == 0){
+                layer.msg("请输入成果名称！");
+                return;
+            }
+            ResuleInfo.resultName = resultName;
+
+            var resultValue = $("#resultValue").val();
+            if (resultValue == undefined || resultValue == null || resultValue.length == 0){
+                layer.msg("请输入成果内容！");
+                return;
+            }
+            ResuleInfo.resultValue = resultValue;
+
+
+            var resultImge = $("#demo1").attr("src");
+            if (resultImge == undefined || resultImge == null || resultImge.length == 0){
+                layer.msg("请上传成果图片！");
+                return;
+            }
+            ResuleInfo.resultImge = resultImge;
+
+            var resultLink = $("#resultLink").val();
+            if (resultLink == undefined || resultLink == null || resultLink.length == 0){
+                layer.msg("请输入成果链接！");
+                return;
+            }
+            ResuleInfo.resultLink = resultLink;
+            ResuleInfo.resultId = $("#resultId").val();
+            ResuleInfo.userStid = $("#userStid").val();
+            ResuleInfo.typeId = $('#classfication option:selected').attr("num");
+
+            $.ajax({
+                "url": "/modity/result/info", //请求地址
+                "type": "POST",
+                "contentType": "application/json;charset=UTF-8",      //请求体的内容类型
+                "data": JSON.stringify(ResuleInfo),                 //发送给服务器的数据，将来的请求体
+                "dataType": "json",                            //预期服务器返回的响应体类型
+                "success": function (response) {
+                    layer.msg(response.message);
+                    if (response.result == "SUCCESS"){
+                        setTimeout(function() {
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            parent.layer.close(index);
+                        }, 2000);
+                    }
+                }
+            });
+        });
+    }
+
+    function initTypeInfo(typeInfo) {
+        var html = "";
+        var oldTypeId = parseInt($("#oldTypeId").val());
+        $.each(typeInfo,function (index,value) {
+            if (oldTypeId == value.typeId){
+                html += "<option selected num = "+value.typeId+">"+value.typeName+"</option>";
+            }else {
+                html += "<option num = "+value.typeId+">"+value.typeName+"</option>";
+            }
+        })
+        $("#classfication").append(html);
+    }
+
+
+</script>
+
+</body>
+</html>

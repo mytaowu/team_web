@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.NewsInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.panzh.entity.NewsInfo" >
+    <id column="new_id" property="newId" jdbcType="INTEGER" />
+    <result column="new_title" property="newTitle" jdbcType="VARCHAR" />
+    <result column="new_time" property="newTime" jdbcType="TIMESTAMP" />
+    <result column="new_imge" property="newImge" jdbcType="VARCHAR" />
+    <result column="new_times" property="newTimes" jdbcType="INTEGER" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="new_value" property="newValue" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from news_info
+    where new_id = #{newId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.panzh.entity.NewsInfo" >
+    insert into news_info (new_id, new_title, new_time, 
+      new_imge, new_times, user_stid, 
+      type_id, new_value)
+    values (#{newId,jdbcType=INTEGER}, #{newTitle,jdbcType=VARCHAR}, #{newTime,jdbcType=TIMESTAMP}, 
+      #{newImge,jdbcType=VARCHAR}, #{newTimes,jdbcType=INTEGER}, #{userStid,jdbcType=VARCHAR}, 
+      #{typeId,jdbcType=INTEGER}, #{newValue,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.panzh.entity.NewsInfo" >
+    update news_info
+    set new_title = #{newTitle,jdbcType=VARCHAR},
+      new_time = #{newTime,jdbcType=TIMESTAMP},
+      new_imge = #{newImge,jdbcType=VARCHAR},
+      new_times = #{newTimes,jdbcType=INTEGER},
+      user_stid = #{userStid,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      new_value = #{newValue,jdbcType=LONGVARCHAR}
+    where new_id = #{newId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select new_id, new_title, new_time, new_imge, new_times, user_stid, type_id, new_value
+    from news_info
+    where new_id = #{newId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select new_id, new_title, new_time, new_imge, new_times, user_stid, type_id, new_value
+    from news_info
+  </select>
+</mapper>

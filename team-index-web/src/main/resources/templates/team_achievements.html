@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head th:include="common_head :: commonHeader('团队成果')"></head>
+
+<head>
+    <link rel="stylesheet" href="css/learning_resource.css">
+</head>
+<body>
+
+<div class="container">
+<!--    头部公共信息-->
+    <div th:replace="team_dyname :: white_header"></div>
+
+    <div class="inner">
+        <div class="inner-seach">
+            <div class="inner-seach-div">
+                <span>
+                    <i class="layui-icon layui-icon-read"></i><input type="text" class="inner-seach-text">
+                </span>
+                </input>
+                <button type="button" class="inner-seach-button seach"><i class="layui-icon layui-icon-search"></i>
+                </button>
+                <button type="button" class="inner-seach-button reflash"><i class="layui-icon layui-icon-refresh"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="layui-row layui-col-space1">
+            <div class="layui-col-md3">
+                <div class="grid-demo grid-demo-bg1">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                        <legend>团队成果分类</legend>
+                    </fieldset>
+                    <ul class="classfication-div">
+                        <li class="classfication-item"><a id=0 class="swatch-date active-a" href="#">全部</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="layui-col-md9">
+
+                <div class="grid-demo">
+                    <div class="inner-data">
+                    <!--放置数据内容-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="team_dyname :: foot"/>
+</div>
+<script src="/js/common.js"></script>
+<script>
+    window.typeId = 0;
+    $(function () {
+        initPage();
+        initData();
+    });
+
+    function initData() {
+        initLeftBar();
+        initInner();
+        initSeach();
+    }
+
+    function initSeach() {
+        $(".seach").click(function () {
+            var keyword = $(".inner-seach-text").val();
+            if (keyword == undefined || keyword.length < 3) {
+                layer.msg("请输入三个以上的字符！");
+                return;
+            }
+            $.get("get/resule/info/vo/for/sereach", {"keyword": keyword}, function (res) {
+                dataShow(res.data);
+            })
+        });
+
+        $(".reflash").click(function () {
+            window.typeId = 0;
+            initInner();
+        });
+    }
+
+    function initInner() {
+        $.get("get/all/resule/info/vo/" + window.typeId, function (res) {
+            dataShow(res.data);
+            return false;
+        })
+    }
+
+    function dataShow(data) {
+        $(".inner-data").empty();
+        var html = "";
+        if (data.length == 0) {
+            html = "<h2>暂无更多数据</h2>";
+        } else {
+            $.each(data, function (index, dataItem) {
+                html += "<a class='resouce-item-a ' target='_blank' href='" + dataItem.resultLink + "'><div class='resouce-item'>" +
+                    "<img src='" + dataItem.resultImge + "'><span class='item-name'>" + dataItem.resultName + "</span><br>" +
+                    "<span class='item-describe'>" + dataItem.resultValue + "</span><div class='item-bottom'>" +
+                    "<div class='layui-row'><div class='layui-col-xs6'><div class='grid-demogrid-demo-bg1'>" +
+                    "<button class='item-bottom-button'>" + dataItem.userInfo.userName + "</button></div></div>" +
+                    "<div class='layui-col-xs6'>" +
+                    "<div class='grid-demo'>" +
+                    "<button class='item-bottom-time'>" + dataItem.resultTime + "</button></div></div></div></div></div></a>"
+            });
+        }
+        $(".inner-data").append(html);
+    }
+
+    function initLeftBar() {
+        $.get("show/all/resule/type", function (res) {
+            var types = res.data;
+            var html = "";
+            $.each(types, function (index, type) {
+                html += "<li class='classfication-item'><a class='swatch-date' id = " + type.typeId + " href='#'>" + type.typeName + "</a></li>"
+            });
+            $(".classfication-div").append(html);
+            bindSwitchData();
+        })
+
+    }
+
+    function bindSwitchData() {
+        $(".swatch-date").click(function () {
+            window.typeId = parseInt($(this).attr("id"));
+            initInner();
+
+            var parent = $(this).parent();
+            var siblings = parent.siblings();
+            $.each(siblings, function (index, value) {
+                $(value).children("a").removeClass("active-a");
+            })
+            $(this).addClass("active-a");
+        });
+    }
+
+    function initPage() {
+        layui.use('layer', function(){
+            layer = layui.layer;
+        });
+    }
+</script>
+</body>
+</html>

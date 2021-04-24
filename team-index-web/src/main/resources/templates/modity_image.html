@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>用户更换头像的方法</title>
+
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/layui/layui.js"></script>
+    <script src="/js/common.js"></script>
+
+    <style>
+        #modity-imag{
+            width: 400px;
+            height: 400px;
+        }
+        #modity-li{
+            width: 100%;
+            height: 70%;
+            line-height: 280px;
+        }
+        #modity-li > img{
+            display: inline-block;
+            width: 50%;
+            height: 68%;
+            border-radius: 50%;
+            border: 1px solid #cccccc;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">更新头像</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div id="modity-imag">
+                <li id="modity-li"><img id="userImage" th:src="${usertImge}" alt=""></li>
+                <button class="layui-btn" id="upLoadImage">点击上传头像</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" th:value="${userId}" id="userId">
+
+<script>
+
+    window.userId = parseInt($("#userId").val());
+
+    window.layer;
+
+    layui.use('layer', function(){
+        window.layer = layui.layer;
+    });
+
+
+
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#upLoadImage' //绑定元素
+            ,url: '/upLoadImage/'+userId //上传接口
+            ,before: function(input) {
+                // 显示加载框;
+                showloading(true);
+            }
+            ,done: function(res){
+                // 关闭数据加载框。
+                showloading(false);
+                // 回显图片信息！
+                $("#userImage").attr("src",res.data);
+                // 弹出更新成功的界面。
+                layer.msg("更新成功！");
+                // 定时父窗口刷新;
+                setTimeout(function () {
+                    window.open("/get/user/info", "_parent");
+                }, 2000);
+            }
+            ,error: function(){
+                layer.msg("上传异常！");
+            }
+        });
+    });
+
+
+</script>
+</body>
+</html>

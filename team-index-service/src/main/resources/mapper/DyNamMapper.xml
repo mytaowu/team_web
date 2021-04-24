@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.DyNamMapper" >
+
+  <resultMap id="BaseResultMap" type="com.panzh.entity.DyNam" >
+    <id column="dy_nam_id" property="dyNamId" jdbcType="INTEGER" />
+    <result column="dy_nam_title" property="dyNamTitle" jdbcType="VARCHAR" />
+    <result column="imge_add" property="imgeAdd" jdbcType="VARCHAR" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="dy_nam_value" property="dyNamValue" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <resultMap id="DyNamVOBaseResultMap" type="com.panzh.vo.DyNamVO" >
+    <id column="dy_nam_id" property="dyNamId" jdbcType="INTEGER" />
+    <result column="dy_nam_title" property="dyNamTitle" jdbcType="VARCHAR" />
+    <result column="imge_add" property="imgeAdd" jdbcType="VARCHAR" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="dy_nam_value" property="dyNamValue" jdbcType="LONGVARCHAR" />
+    <association property="userInfo" javaType="com.panzh.entity.UserInfo">
+      <id column="user_id" property="userId" jdbcType="INTEGER" />
+      <result column="user_name" property="userName" jdbcType="VARCHAR" />
+      <result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+      <result column="user_class" property="userClass" jdbcType="VARCHAR" />
+      <result column="user_college" property="userCollege" jdbcType="VARCHAR" />
+      <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+      <result column="user_power" property="userPower" jdbcType="INTEGER" />
+      <result column="user_pass" property="userPass" jdbcType="VARCHAR" />
+      <result column="user_use" property="userUse" jdbcType="INTEGER" />
+      <result column="user_ph" property="userPh" jdbcType="VARCHAR" />
+      <result column="usert_imge" property="usertImge" jdbcType="VARCHAR" />
+      <result column="user_createtime" property="userCreatetime" jdbcType="TIMESTAMP" />
+    </association>
+  </resultMap>
+
+<!--      List<DyNamVO> selectAllDyNameVO();-->
+  <select id="selectAllDyNameVO" resultMap="DyNamVOBaseResultMap">
+    select dy_nam.*,user_info.*
+    from dy_nam left join user_info on dy_nam.user_stid = user_info.user_stid
+     order by dy_nam_id desc
+  </select>
+
+  <select id="selectoneDyNameVO"  parameterType="int"  resultMap="DyNamVOBaseResultMap">
+    select dy_nam.*,user_info.*
+    from dy_nam left join user_info on dy_nam.user_stid = user_info.user_stid
+    where dy_nam_id = #{id}
+  </select>
+
+
+
+  <!--  List<DyNamVO> selectDyNameVOByUserStid(String userStid);-->
+  <select id="selectDyNameVOByUserStid" parameterType="string" resultMap="DyNamVOBaseResultMap">
+    select dy_nam.*,user_info.*
+    from dy_nam left join user_info on dy_nam.user_stid = user_info.user_stid
+    <if test='userStid != "all"'>
+      where dy_nam.user_stid = #{userStid}
+    </if>
+    order by dy_nam_id desc
+  </select>
+
+<!--  List<DyNamVO> selectDyNameVoByCount(int conut);-->
+    <select id="selectDyNameVoByCount" parameterType="int" resultMap="DyNamVOBaseResultMap">
+      select dy_nam.*,user_info.*
+      from dy_nam left join user_info on dy_nam.user_stid = user_info.user_stid
+      order by dy_nam_id desc limit #{conut}
+    </select>
+
+
+
+</mapper>

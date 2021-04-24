@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+
+<head th:include="common_head :: commonHeader('团队动态')"></head>
+<head>
+    <link rel="stylesheet" href="css/dynameinfo.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="head while-head" th:fragment="white_header">
+        <a th:href="@{/index}"><img th:src="@{/image/logo/head_log_1.png}" ></a>
+
+        <ul class="headUl">
+            <li><a num = "1" class="while-head-a" th:href="@{/team_dyname}">团队动态</a></li>
+            <li><a num = "2" class="while-head-a" th:href="@{/team_news}">热点新闻</a></li>
+            <li><a num = "3" class="while-head-a" th:href="@{/team_achievements}">团队成果</a></li>
+            <li><a num = "4" class="while-head-a" th:href="@{/learning_resource}">学习资源</a></li>
+        </ul>
+        <ul class="headLogin" th:hidden="${session.userInfo != null}">
+            <li><a style="color: #222" id="login-btn" href="">登录/</a><a id="register-btn" style="color: #222" href="">注册</a></li>
+        </ul>
+        <ul class="headLogin" th:hidden="${session.userInfo == null}">
+            <li>
+                <a class="headLogin-a">
+                    <img th:src="${session.userInfo == null ? 'xxx' : session.userInfo.getUsertImge()}" alt="">
+                </a>
+            </li>
+        </ul>
+
+        <ul class="float-ul">
+            <li><a href="/get/user/info">个人主页</a></li>
+            <li><a num = 1 class="add-btn" href="#">添加动态</a></li>
+            <li><a num = 2 class="add-btn" href="#">添加新闻</a></li>
+            <li><a num = 3 class="add-btn" href="#">添加成果</a></li>
+            <li><a num = 4 class="add-btn" href="#">添加资源</a></li>
+            <li><a href="/do/login/out">退出登录</a></li>
+        </ul>
+    </div>
+
+    <div class="inner">
+        <div class="layui-carousel lunbo-main" id="test10">
+            <div carousel-item="" id="dynamelunbo">
+                <!--这里存放顶部轮播图-->
+            </div>
+        </div>
+
+        <div class="inner-inner">
+            <div class="layui-row layui-col-space10">
+                <div class="layui-col-md9">
+                    <div class="grid-demo grid-demo-bg1">
+                        <div class="inner-article" id="inner_read">
+                        </div>
+                        <div id="Pagination" class="pagination" style="float: right"><!-- 这里显示分页 --></div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="grid-demo">
+                        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                            <legend>动态</legend>
+                        </fieldset>
+                        <div class="heat-meassge-group" id="meassge-group">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="foot" th:fragment="foot">
+        <div class="font-center">
+            <div class="foot-head">
+                <div class="font-about-us">
+                    <a href="#" id="join">加入我们</a><a href="/index">关于我们</a>
+                </div>
+                <div class="font-about-us">
+                    <a href="">WEB应用专业团队</a>
+                </div>
+            </div>
+            <div class="font-tail">
+                <span>地址：攀枝花市东区机场路10号</span><br>
+                <span>联系方式：wutao@pzhuweb.cn</span><br>
+                <span>© 2020-2021 pzhuweb.com 版权所有 <img
+                        src="https://img.alicdn.com/tfs/TB1..50QpXXXXX7XpXXXXXXXXXX-40-40.png" alt="">ICP认证：蜀17013737</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.carousel;
+    layui.use(['carousel', 'form'], function () {
+        carousel = layui.carousel
+            , form = layui.form;
+        layer = layui.layer;
+        //图片轮播
+        carousel.render({
+            elem: '#test10'
+            , width: '100%'
+            , height: '600px'
+            , interval: 5000,
+            arrow: "hover",
+            indicator: "none"
+        });
+
+
+        //监听开关
+        form.on('switch(autoplay)', function () {
+            ins3.reload({
+                autoplay: this.checked
+            });
+        });
+
+        $('.demoSet').on('keyup', function () {
+            var value = this.value
+                , options = {};
+            if (!/^\d+$/.test(value)) return;
+
+            options[this.name] = value;
+            ins3.reload(options);
+        });
+
+        //其它示例
+        $('.demoTest .layui-btn').on('click', function () {
+            var othis = $(this), type = othis.data('type');
+            active[type] ? active[type].call(this, othis) : '';
+        });
+    });
+
+    //1.初始化变量
+    window.pageNo = 1;
+
+    $(function () {
+        init();
+    });
+
+
+    function init() {
+        $.get("get/all/dy/nam/info/vo/"+pageNo,function (response) {
+            var pageInfo = response.data;
+            initlunbo(pageInfo.list);
+            inimeassge(pageInfo.list);
+            iniread(pageInfo.list);
+            generateNavigator(pageInfo);
+        })
+    }
+
+    function initinner() {
+        $.get("get/all/dy/nam/info/vo/"+pageNo,function (response) {
+            var pageInfo = response.data;
+            iniread(pageInfo.list);
+            generateNavigator(pageInfo);
+        })
+    }
+
+    function initlunbo(list) {
+        var size = list.length;
+        size = size >= 5 ? 5 : size;
+        var dynamelunbo = $("#dynamelunbo");
+        for (var i = 0 ; i < size ; i++){
+            var html = "<div class='lunbo'><a target='_blank' href=show_dy_info.do/"+list[i].dyNamId+"><span class='lunboText'>"+list[i].dyNamTitle+"</span></a><img style='height:100%;width: 100%'src='"+list[i].imgeAdd+"'></div>";
+            dynamelunbo.append(html);
+        }
+        //图片轮播
+        carousel.render({
+            elem: '#test10'
+            , width: '100%'
+            , height: '600px'
+            , interval: 5000,
+            arrow:"hover",
+            indicator: "none"
+        });
+    }
+
+    function inimeassge(list) {
+        var size = list.length;
+        size = size >= 5 ? 5 : size;
+        var meassgegroup = $("#meassge-group");
+        for (var i = 0 ; i < size ; i++){
+            var html = "<div class='heat-meassge-item'><a target='_blank' href=show_dy_info.do/"+list[i].dyNamId+"><div class='heat-meassge-title'>"+list[i].dyNamTitle+"</div>\n" +
+                "<div class='heat-meassge-read'>发表人："+list[i].userInfo.userName+"</div></a></div>";
+            meassgegroup.append(html);
+        }
+    }
+
+    function iniread(list) {
+        var size = list.length;
+        var inner_read = $("#inner_read");
+        inner_read.empty();
+        for (var i = 0 ; i < size ; i++){
+            var dyNamValue = list[i].dyNamValue;
+            //爱的魔力转圈圈(使用正则表达式进行匹配操作！);
+            //过滤双标签
+            dyNamValue = dyNamValue.replace(/<[^>]+>/g,"");
+            //过滤单标签
+            dyNamValue = dyNamValue.replace(/<[^>]/g,"");
+            //去除多余的空格
+            dyNamValue = dyNamValue.replace(" ","");
+            //拼装成品的html页面
+            var html = "<div class='article-item'><div class='layui-col-md5 article-imag-div'><img class='article-imag' src='"+list[i].imgeAdd+"' alt=''></div><div class='layui-col-md7 article-content-main'><div class='article-content'><a target='_blank' href=show_dy_info.do/"+list[i].dyNamId+"><div class='article-title'>"+list[i].dyNamTitle+"</div><div class='article-summary'>"+dyNamValue+"</div></a><div class='article-bottom'><div class='read-number'>学号:<span class='read-number'>"+list[i].userStid+"</span></div><div class='autor'><a href='#'><img src='"+list[i].userInfo.usertImge+"' alt=''><span class='read-number'>"+list[i].userInfo.userName+"</span></a></div></div></div></div>";
+            inner_read.append(html);
+        }
+    }
+
+
+    function generateNavigator(pageInfo) {
+
+        // 获取分页总记录数
+        var totalRecordNo = pageInfo.total;
+
+        // 创建分页
+        $("#Pagination").pagination(totalRecordNo, {
+            num_edge_entries: 3, 				//边缘页数
+            num_display_entries: 4, 			//主体页数
+            callback: pageSelectCallback,		//点击具体页码时调用这个函数
+            items_per_page: pageInfo.pageSize, 	//每页显示1项
+            current_page: (pageInfo.pageNum - 1),	//当前页索引，需要将pageInfo.pageNum-1才是合适的值
+            prev_text: "上一页",					//上一页按钮的文本
+            next_text: "下一页",					//下一页按钮的文本
+        });
+    }
+
+    function pageSelectCallback(page_index, jq) {
+        window.pageNo = page_index + 1;
+        initinner();
+        return false;
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <title>修改用户信息页面</title>
+
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/layui/layui.js"></script>
+    <script src="/js/jquery.form.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">用户修改</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div class="login-div">
+                <form>
+                    <font>姓名：</font>
+                    <span class="login-acct login-span">
+                    <i class="layui-icon layui-icon-username"></i><input readonly th:value="${userInfoVO.getUserName()}" type="text"
+                                                                         class="inner-acct-text">
+                </span>
+                    <br>
+                    <font>学号：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-auz"></i><input readonly  th:value="${userInfoVO.getUserStid()}" type="number"
+                                                                    class="inner-acct-text">
+                </span><br>
+                    <font>班级：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-home"></i><input th:value="${userInfoVO.getUserClass()}" id="userClass" name="userClass" required type="text"
+                                                                     class="inner-acct-text">
+                </span>
+                    <br>
+                    <font>学院：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-log"></i><input th:value="${userInfoVO.getUserCollege()}" id="userCollege" name="userCollege" required type="text"
+                                                                    class="inner-acct-text">
+                </span>
+                    <br>
+                    <font>电话：</font>
+                    <span class="login-pass login-span">
+                    <i class="layui-icon layui-icon-password"></i><input th:value="${userInfoVO.getUserPh()}" id="userPh" name="userPh" required type="number"
+                                                                         class="inner-acct-text">
+                </span>
+                </form>
+                <input type="hidden" th:value="${userInfoVO.getUsertImge()}" id="usertImge">
+                <input type="hidden" th:value="${userInfoVO.getUserId()}" id="userId">
+                <button id="modity-btn" >点击修改</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+
+
+    $(function () {
+        initPage();
+        $('#modity-btn').on('click',function() {
+            var ModifyUserVO = {};
+            var userCollege = $("#userCollege").val();
+            if (userCollege == null || userCollege == undefined ||userCollege.length == 0) {
+                layer.msg("请输入学院！");
+                return;
+            }
+            ModifyUserVO.userCollege = userCollege;
+
+            var userClass = $("#userClass").val();
+            if (userClass == null || userClass == undefined ||userClass.length == 0) {
+                layer.msg("请输入班级！");
+                return;
+            }
+            ModifyUserVO.userClass = userClass;
+
+            var userPh = $("#userPh").val();
+            if (userPh == null || userPh == undefined ||userPh.length == 0) {
+                layer.msg("请输入电话！");
+                return;
+            }
+            ModifyUserVO.userPh = userPh;
+
+            ModifyUserVO.usertImge = $("#usertImge").val();
+            ModifyUserVO.userId = $("#userId").val();
+
+            $.ajax({
+                url: "/modify/user/info",
+                type: "POST",
+                data:JSON.stringify(ModifyUserVO),
+                contentType: "application/json",  //缺失会出现URL编码，无法转成json对象
+                success: function (res) {
+                    if (res.result == "SUCCESS") {
+                        layer.msg("修改成功！");
+                        //重新加载网页;
+                        setTimeout(function () {
+                            window.open("/get/user/info", "_parent");
+                        }, 2000);
+                    }else {
+                        layer.msg(res.message);
+                    }
+                }
+            });
+        });
+        /**
+         * 自动将form表单封装成json对象
+         */
+        $.fn.serializeObject = function() {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function () {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+    })
+
+    function initPage() {
+        layui.use('layer', function(){
+            layer = layui.layer;
+        });
+    }
+
+
+</script>
+</body>
+</html>

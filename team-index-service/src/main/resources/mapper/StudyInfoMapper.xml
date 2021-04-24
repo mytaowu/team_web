@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.StudyInfoMapper">
+    <resultMap id="BaseResultMap" type="com.panzh.entity.StudyInfo">
+        <id column="study_id" property="studyId" jdbcType="INTEGER"/>
+        <result column="study_value" property="studyValue" jdbcType="VARCHAR"/>
+        <result column="study_name" property="studyName" jdbcType="VARCHAR"/>
+        <result column="imge_add" property="imgeAdd" jdbcType="VARCHAR"/>
+        <result column="study_time" property="studyTime" jdbcType="TIMESTAMP"/>
+        <result column="study_link" property="studyLink" jdbcType="VARCHAR"/>
+        <result column="user_stid" property="userStid" jdbcType="VARCHAR"/>
+        <result column="type_id" property="typeId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="StudyInfoVOResultMap" type="com.panzh.vo.StudyInfoVO" >
+        <id column="study_id" property="studyId" jdbcType="INTEGER" />
+        <result column="study_value" property="studyValue" jdbcType="VARCHAR" />
+        <result column="study_name" property="studyName" jdbcType="VARCHAR" />
+        <result column="imge_add" property="imgeAdd" jdbcType="VARCHAR" />
+        <result column="study_time" property="studyTime" jdbcType="TIMESTAMP" />
+        <result column="study_link" property="studyLink" jdbcType="VARCHAR" />
+        <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+        <result column="type_id" property="typeId" jdbcType="INTEGER" />
+        <association property="userInfo" javaType="com.panzh.entity.UserInfo">
+            <id column="user_id" property="userId" jdbcType="INTEGER" />
+            <result column="user_name" property="userName" jdbcType="VARCHAR" />
+            <result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+            <result column="user_class" property="userClass" jdbcType="VARCHAR" />
+            <result column="user_college" property="userCollege" jdbcType="VARCHAR" />
+            <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+            <result column="user_power" property="userPower" jdbcType="INTEGER" />
+            <result column="user_pass" property="userPass" jdbcType="VARCHAR" />
+            <result column="user_use" property="userUse" jdbcType="INTEGER" />
+            <result column="user_ph" property="userPh" jdbcType="VARCHAR" />
+            <result column="usert_imge" property="usertImge" jdbcType="VARCHAR" />
+            <result column="user_createtime" property="userCreatetime" jdbcType="TIMESTAMP" />
+        </association>
+    </resultMap>
+
+    <select id="getAllStudyInfoByTypeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <choose>
+            <when test="typeId==0">
+                select * from study_info order by study_info.study_id desc
+            </when>
+            <otherwise>
+                select * from study_info where type_id=#{typeId} order by study_info.study_id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--    List<StudyInfoVO> selectStudyInfoVoByUserStid(String userStid);-->
+    <select id="selectStudyInfoVoByUserStid" parameterType="string" resultMap="StudyInfoVOResultMap">
+        select * from study_info
+        left join user_info on study_info.user_stid = user_info.user_stid
+        <if test='userStid != "all"'>
+            where study_info.user_stid = #{userStid}
+        </if>
+        order by study_info.study_id desc
+    </select>
+
+
+</mapper>

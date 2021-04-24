@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.StudyInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.panzh.entity.StudyInfo" >
+    <id column="study_id" property="studyId" jdbcType="INTEGER" />
+    <result column="study_value" property="studyValue" jdbcType="VARCHAR" />
+    <result column="study_name" property="studyName" jdbcType="VARCHAR" />
+    <result column="imge_add" property="imgeAdd" jdbcType="VARCHAR" />
+    <result column="study_time" property="studyTime" jdbcType="TIMESTAMP" />
+    <result column="study_link" property="studyLink" jdbcType="VARCHAR" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from study_info
+    where study_id = #{studyId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.panzh.entity.StudyInfo" >
+    insert into study_info (study_id, study_value, study_name, 
+      imge_add, study_time, study_link, 
+      user_stid, type_id)
+    values (#{studyId,jdbcType=INTEGER}, #{studyValue,jdbcType=VARCHAR}, #{studyName,jdbcType=VARCHAR}, 
+      #{imgeAdd,jdbcType=VARCHAR}, #{studyTime,jdbcType=TIMESTAMP}, #{studyLink,jdbcType=VARCHAR}, 
+      #{userStid,jdbcType=VARCHAR}, #{typeId,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.panzh.entity.StudyInfo" >
+    update study_info
+    set study_value = #{studyValue,jdbcType=VARCHAR},
+      study_name = #{studyName,jdbcType=VARCHAR},
+      imge_add = #{imgeAdd,jdbcType=VARCHAR},
+      study_time = #{studyTime,jdbcType=TIMESTAMP},
+      study_link = #{studyLink,jdbcType=VARCHAR},
+      user_stid = #{userStid,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER}
+    where study_id = #{studyId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select study_id, study_value, study_name, imge_add, study_time, study_link, user_stid, 
+    type_id
+    from study_info
+    where study_id = #{studyId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select study_id, study_value, study_name, imge_add, study_time, study_link, user_stid, 
+    type_id
+    from study_info
+  </select>
+</mapper>

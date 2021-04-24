@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.panzh.teamindexservice.mapper.ResuleInfoMapper">
+    <resultMap id="BaseResultMap" type="com.panzh.entity.ResuleInfo" >
+        <id column="result_id" property="resultId" jdbcType="INTEGER" />
+        <result column="result_name" property="resultName" jdbcType="VARCHAR" />
+        <result column="result_imge" property="resultImge" jdbcType="VARCHAR" />
+        <result column="result_link" property="resultLink" jdbcType="VARCHAR" />
+        <result column="result_time" property="resultTime" jdbcType="TIMESTAMP" />
+        <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+        <result column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="result_value" property="resultValue" jdbcType="LONGVARCHAR" />
+    </resultMap>
+
+    <resultMap id="ResuleInfoVOResultMap" type="com.panzh.vo.ResuleInfoVO" >
+        <id column="result_id" property="resultId" jdbcType="INTEGER" />
+        <result column="result_name" property="resultName" jdbcType="VARCHAR" />
+        <result column="result_imge" property="resultImge" jdbcType="VARCHAR" />
+        <result column="result_link" property="resultLink" jdbcType="VARCHAR" />
+        <result column="result_time" property="resultTime" jdbcType="TIMESTAMP" />
+        <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+        <result column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="result_value" property="resultValue" jdbcType="LONGVARCHAR" />
+        <association property="userInfo" javaType="com.panzh.entity.UserInfo">
+            <id column="user_id" property="userId" jdbcType="INTEGER" />
+            <result column="user_name" property="userName" jdbcType="VARCHAR" />
+            <result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+            <result column="user_class" property="userClass" jdbcType="VARCHAR" />
+            <result column="user_college" property="userCollege" jdbcType="VARCHAR" />
+            <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+            <result column="user_power" property="userPower" jdbcType="INTEGER" />
+            <result column="user_pass" property="userPass" jdbcType="VARCHAR" />
+            <result column="user_use" property="userUse" jdbcType="INTEGER" />
+            <result column="user_ph" property="userPh" jdbcType="VARCHAR" />
+            <result column="usert_imge" property="usertImge" jdbcType="VARCHAR" />
+            <result column="user_createtime" property="userCreatetime" jdbcType="TIMESTAMP" />
+        </association>
+    </resultMap>
+
+
+    <select id="getAllresuleInfoVoByTypeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <choose>
+            <when test="typeId==0">
+                select * from resule_info order by resule_info.result_id desc
+            </when>
+            <otherwise>
+                select * from resule_info where type_id=#{typeId} order by resule_info.result_id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+<!--    List<ResuleInfoVO> selectResultInfoVoByUserStid(String userStid);-->
+    <select id="selectResultInfoVoByUserStid" parameterType="string" resultMap="ResuleInfoVOResultMap">
+        select * from resule_info
+        left join user_info on resule_info.user_stid = user_info.user_stid
+        <if test='userStid != "all"'>
+            where resule_info.user_stid = #{userStid}
+        </if>
+        order by resule_info.result_id desc
+    </select>
+
+
+<!--    List<ResuleInfoVO> getResuleInfoVoForCount(Integer count);-->
+    <select id="getResuleInfoVoForCount" parameterType="int" resultMap="ResuleInfoVOResultMap">
+        select * from resule_info
+        left join user_info on resule_info.user_stid = user_info.user_stid
+        order by resule_info.result_id desc LIMIT #{count}
+    </select>
+
+</mapper>

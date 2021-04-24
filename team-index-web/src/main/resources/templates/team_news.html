@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head th:include="common_head :: commonHeader('热点新闻')"></head>
+
+<head>
+    <link rel="stylesheet" th:href="@{/css/team_news.css}"/>
+</head>
+<body>
+
+<div class="container">
+    <div th:replace="team_dyname :: white_header"></div>
+    <div class="inner">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md9">
+                <div class="grid-demo grid-demo-bg1">
+                    <div class="layui-carousel lunbo-main" id="test10">
+                        <div carousel-item="" id="newInfoLunbo">
+                            <!--放置轮播图的地方-->
+                        </div>
+                    </div>
+                    <div class="inner-article" id="inner-read">
+                        <!-- 放置中央新闻的地方-->
+                    </div>
+                    <div id="Pagination" class="pagination" style="float: right"><!-- 这里显示分页 --></div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="grid-demo">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                        <legend>热门分类</legend>
+                    </fieldset>
+                    <div class="button-group">
+                        <!-- 分类的信息页面-->
+                    </div>
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                        <legend>热门文章</legend>
+                    </fieldset>
+                    <div class="heat-meassge-group">
+                        <!--这里显示推荐的信息-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="team_dyname :: foot"/>
+</div>
+<script src="/js/common.js"></script>
+<script>
+    window.carousel;
+    layui.use(['carousel', 'form'], function () {
+        carousel = layui.carousel
+            , form = layui.form;
+        //其它示例
+        $('.demoTest .layui-btn').on('click', function () {
+            var othis = $(this), type = othis.data('type');
+            active[type] ? active[type].call(this, othis) : '';
+        });
+    });
+
+    //1.初始化变量
+    window.pageNo = 1;
+
+    window.typeId = 0;
+
+    window.typeInfo = {};
+
+
+    $(function () {
+        init();
+    });
+
+    function initShowPage() {
+        $(".button-item").click(function () {
+            var siblings = $(this).siblings();
+            $.each(siblings,function (index,value) {
+                $(value).removeClass("active-btn");
+            });
+            $(this).addClass("active-btn");
+        });
+    }
+
+    function init() {
+        $.get("/show/all/new/type",function (res) {
+            //初始化我们的分类信息
+            typeInfo = res.data;
+            console.log(typeInfo);
+            var html = "<button num = 0 class='type-swatch button-item active-btn'>推荐</button>\n";
+            $.each(typeInfo,function (index,value) {
+                html += "<button class='type-swatch button-item' num = "+value.typeId+">"+value.typeName+"</button>\n"
+            })
+            $(".button-group").append(html);
+            initShowPage();
+            bindTypeEven();
+            $.get("/get/all/new/info/vo/"+pageNo+"/"+typeId,function (response) {
+                var pageInfo = response.data;
+                initlunbo(pageInfo.list);
+                inimeassge(pageInfo.list);
+                iniread(pageInfo.list);
+                generateNavigator(pageInfo);
+            })
+        });
+    }
+
+    function bindTypeEven() {
+        $(".type-swatch").click(function () {
+            var num = $(this).attr("num");
+            window.pageNo = 1;
+            window.typeId = parseInt(num);
+            initInner();
+        });
+    }
+
+    function initInner() {
+        $.get("/get/all/new/info/vo/"+pageNo+"/"+typeId,function (response) {
+            var pageInfo = response.data;
+            iniread(pageInfo.list);
+            generateNavigator(pageInfo);
+        })
+    }
+
+    function initlunbo(list) {
+        var size = list.length;
+        size = size >= 5 ? 5 : size;
+        var newInfoLunbo = $("#newInfoLunbo");
+        for (var i = 0 ; i < size ; i++){
+            var html = "<div class='lunbo'><a target='_blank' href=show_new_info.do/"+list[i].newId+"><span class='lunboText'>"+list[i].newTitle+"</span></a><img style='height:100%;width:100%'" +
+                "src='"+list[i].newImge+"'></div>";
+            newInfoLunbo.append(html);
+        }
+        //图片轮播
+        carousel.render({
+            elem: '#test10'
+            , width: '100%'
+            , height: '350px'
+            , interval: 5000,
+            arrow:"hover",
+            indicator: "none"
+        });
+    }
+
+    function inimeassge(list) {
+        $.get("/get/simple/new/info/vo/5",function (res) {
+            var simpleNewInfo = res.data;
+            $.each(simpleNewInfo,function (index,value) {
+                var html = "<div class='heat-meassge-item'><a target='_blank' href = show_new_info.do/"+value.newId+"><div class='heat-meassge-title'>"+value.newTitle+"</div><div class='heat-meassge-read'>阅读数:"+value.newTimes+"</div></a></div>";
+                $(".heat-meassge-group").append(html);
+            })
+        })
+    }
+
+    function iniread(list) {
+        var size = list.length;
+        var inner_read = $("#inner-read");
+        inner_read.empty();
+
+        for (var i = 0 ; i < size ; i++){
+            var typeName = getClassficationName(list[i].typeId);
+            var newValue = list[i].newValue;
+            //爱的魔力转圈圈(使用正则表达式进行匹配操作！);
+            newValue = newValue.replace(/<[^>]+>/g,"");
+            newValue = newValue.replace(/<[^>]/g,"");
+            newValue = newValue.replace(" ","");
+            var html = "<div class='article-item'>\n" +
+                "<div class='layui-col-md5 article-imag-div'>\n" +
+                "<img class='article-imag' src='"+list[i].newImge+"' alt=''>\n" +
+                "</div><div class='layui-col-md7 article-content-main'><div class='article-content'><a target='blank' href='show_new_info.do/"+list[i].newId+"'>\n" +
+                "<div class='article-title'>"+list[i].newTitle+"</div><div class='article-summary'>"+newValue+"</div></a>\n" +
+                "<div class='article-bottom'><div class='read-number'>阅读数 <span class='read-number'>"+list[i].newTimes+"</span>\n" +
+                "</div><div class='autor'><a target='blank' href='#'><img class='message-imag' src='"+list[i].userInfo.usertImge+"'alt=''><span class='autor-name'>"+list[i].userInfo.userName+"</span></a></div><div class='article-time'>"+list[i].newTime+"</div><div class='article-type'>"+typeName+"\n" +
+                "</div></div></div></div></div>";
+            inner_read.append(html);
+        }
+    }
+
+    function getClassficationName(id) {
+        console.log("信息的分类id");
+        var typeName = "未知分类";
+        $.each(typeInfo,function (index,value) {
+            if (id == value.typeId){
+                typeName = value.typeName;
+                return false;
+            }
+        })
+        return typeName;
+    }
+
+
+    function generateNavigator(pageInfo) {
+
+        // 获取分页总记录数
+        var totalRecordNo = pageInfo.total;
+
+        // 创建分页
+        $("#Pagination").pagination(totalRecordNo, {
+            num_edge_entries: 3, 				//边缘页数
+            num_display_entries: 4, 			//主体页数
+            callback: pageSelectCallback,		//点击具体页码时调用这个函数
+            items_per_page: pageInfo.pageSize, 	//每页显示1项
+            current_page: (pageInfo.pageNum - 1),	//当前页索引，需要将pageInfo.pageNum-1才是合适的值
+            prev_text: "上一页",					//上一页按钮的文本
+            next_text: "下一页",					//下一页按钮的文本
+        });
+    }
+
+    function pageSelectCallback(page_index, jq) {
+        window.pageNo = page_index + 1;
+        initInner();
+        return false;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panzh.teamindexservice.mapper.DyNamMapper" >
+  <resultMap id="BaseResultMap" type="com.panzh.entity.DyNam" >
+    <id column="dy_nam_id" property="dyNamId" jdbcType="INTEGER" />
+    <result column="dy_nam_title" property="dyNamTitle" jdbcType="VARCHAR" />
+    <result column="imge_add" property="imgeAdd" jdbcType="VARCHAR" />
+    <result column="user_stid" property="userStid" jdbcType="VARCHAR" />
+    <result column="dy_nam_value" property="dyNamValue" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dy_nam
+    where dy_nam_id = #{dyNamId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.panzh.entity.DyNam" >
+    insert into dy_nam (dy_nam_id, dy_nam_title, imge_add, 
+      user_stid, dy_nam_value)
+    values (#{dyNamId,jdbcType=INTEGER}, #{dyNamTitle,jdbcType=VARCHAR}, #{imgeAdd,jdbcType=VARCHAR}, 
+      #{userStid,jdbcType=VARCHAR}, #{dyNamValue,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.panzh.entity.DyNam" >
+    update dy_nam
+    set dy_nam_title = #{dyNamTitle,jdbcType=VARCHAR},
+      imge_add = #{imgeAdd,jdbcType=VARCHAR},
+      user_stid = #{userStid,jdbcType=VARCHAR},
+      dy_nam_value = #{dyNamValue,jdbcType=LONGVARCHAR}
+    where dy_nam_id = #{dyNamId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select dy_nam_id, dy_nam_title, imge_add, user_stid, dy_nam_value
+    from dy_nam
+    where dy_nam_id = #{dyNamId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select dy_nam_id, dy_nam_title, imge_add, user_stid, dy_nam_value
+    from dy_nam
+  </select>
+</mapper>
